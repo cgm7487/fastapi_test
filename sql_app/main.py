@@ -14,27 +14,27 @@ app = FastAPI()
 
 
 # Dependency
-#def get_db():
-#    db = SessionLocal()
-#    try:
-#        yield db
-#    finally:
-#        db.close()
-
-@app.middleware("http")
-async def db_session_middleware(request: Request, call_next):
-    response = Response("Internal server error", status_code=500)
+def get_db():
+    db = SessionLocal()
     try:
-        request.state.db = SessionLocal()
-        response = await call_next(request)
+        yield db
     finally:
-        request.state.db.close()
-    return response
+        db.close()
+
+#@app.middleware("http")
+#async def db_session_middleware(request: Request, call_next):
+#    response = Response("Internal server error", status_code=500)
+#    try:
+#        request.state.db = SessionLocal()
+#        response = await call_next(request)
+#    finally:
+#        request.state.db.close()
+#    return response
 
 
 # Dependency
-def get_db(request: Request):
-    return request.state.db
+#def get_db(request: Request):
+#    return request.state.db
 
 
 @app.post("/users/", response_model=schemas.User)
